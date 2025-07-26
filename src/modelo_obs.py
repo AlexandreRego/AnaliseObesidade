@@ -120,7 +120,7 @@ def gerar_pairplot(df):
 st.title("Dashboard de Análise de Risco de Obesidade")
 
 _, col_img, _ = st.columns([1, 4, 1])
-caminho_imagem = "C:/devfiap04/projeto/AnaliseObesidade/data/raw/tabela-imc_202108231741.png"
+caminho_imagem = "https://raw.githubusercontent.com/AlexandreRego/AnaliseObesidade/refs/heads/main/data/raw/tabela-imc_202108231741.png"
 
 with col_img:
     st.image(
