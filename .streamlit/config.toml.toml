@@ -1,0 +1,6 @@
+# .streamlit/config.toml
+[server]
+sslCertFile = "/app/cert.pem"
+sslKeyFile = "/app/key.pem"
+port = 8501
+address = "0.0.0.0"

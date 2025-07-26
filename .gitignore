@@ -1,0 +1,4 @@
+ # Ignorar chaves SSL, credenciais e arquivos de segredo
+*.pem
+key
+cert

@@ -1,0 +1,9 @@
+venv/
+node_modules
+.git
+.gitignore
+.DS_Store
+npm-debug.log
+dist
+build
+.env
