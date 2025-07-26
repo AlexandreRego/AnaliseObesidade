@@ -26,7 +26,7 @@ st.set_page_config(
 
 # --- Constantes ---
 # MODIFICAÇÃO: Renomeado para refletir que agora é um pipeline completo
-PIPELINE_FILENAME = "https://github.com/AlexandreRego/AnaliseObesidade/blob/main/src/modelo_rf_pipeline.pkl"
+PIPELINE_FILENAME = os.path.join("C:\devfiap04\projeto\AnaliseObesidade\src\modelo_rf_pipeline.pkl") 
 # Removido PREPROCESSOR_FILENAME, pois o pipeline inclui o pré-processador
 df = pd.read_csv('https://raw.githubusercontent.com/AlexandreRego/AnaliseObesidade/refs/heads/main/data/raw/Obesity.csv')
 numeric_features = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
