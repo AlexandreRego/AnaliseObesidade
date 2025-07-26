@@ -26,9 +26,9 @@ st.set_page_config(
 
 # --- Constantes ---
 # MODIFICAÇÃO: Renomeado para refletir que agora é um pipeline completo
-PIPELINE_FILENAME = os.path.join(".", "modelo_rf_pipeline.pkl") 
+PIPELINE_FILENAME = os.path.join(".", "modelo_rf_pipeline.pkl")
 # Removido PREPROCESSOR_FILENAME, pois o pipeline inclui o pré-processador
-df = pd.read_csv('C:/devfiap04/projeto/AnaliseObesidade/data/raw/Obesity.csv')
+df = pd.read_csv('https://raw.githubusercontent.com/AlexandreRego/AnaliseObesidade/refs/heads/main/data/raw/Obesity.csv')
 numeric_features = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
 categorical_features = ['Gender', 'family_history', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
 
@@ -120,7 +120,7 @@ def gerar_pairplot(df):
 st.title("Dashboard de Análise de Risco de Obesidade")
 
 _, col_img, _ = st.columns([1, 4, 1])
-caminho_imagem = "C:/devfiap04/projeto/AnaliseObesidade/data/raw/tabela-imc_202108231741.png"
+caminho_imagem = "https://raw.githubusercontent.com/AlexandreRego/AnaliseObesidade/refs/heads/main/data/raw/tabela-imc_202108231741.png"
 
 with col_img:
     st.image(
