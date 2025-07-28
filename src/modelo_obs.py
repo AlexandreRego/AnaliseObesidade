@@ -8,45 +8,36 @@ from sklearn.model_selection import train_test_split
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler, OneHotEncoder
 from sklearn.compose import ColumnTransformer
-from sklearn.pipeline import Pipeline # Importar Pipeline
+from sklearn.pipeline import Pipeline
 from sklearn.metrics import accuracy_score
 import plotly.express as px
 import os
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# 1 PÁGINA
 st.set_page_config(
     page_title="Análise Obesidade | Dashboard",
     layout="wide",
     initial_sidebar_state="expanded"
 )
 
-# 2 FUNÇÕES, CONSTANTES E INICIALIZAÇÃO
-
-# --- Constantes ---
-# MODIFICAÇÃO: Renomeado para refletir que agora é um pipeline completo
 PIPELINE_FILENAME = os.path.join(".", "modelo_rf_pipeline.pkl")
-# Removido PREPROCESSOR_FILENAME, pois o pipeline inclui o pré-processador
 df = pd.read_csv('https://raw.githubusercontent.com/AlexandreRego/AnaliseObesidade/refs/heads/main/data/raw/Obesity.csv')
 numeric_features = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
 categorical_features = ['Gender', 'family_history', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
 
-# Define os valores padrão para a limpeza e para a primeira execução do app.
 default_values = {
     "gender": 'Male', "age": 14, "height": 1.40, "weight": 40.0,
     "family_history": 'no', "favc": 'no', "fcvc": 1.0, "ncp": 1.0,
     "caec": 'no', "smoke": 'no', "ch2o": 1.0, "scc": 'no',
     "faf": 0.0, "tue": 0.0, "calc": 'no', "mtrans": 'Automobile'
 }
-# Este loop garante que os valores só sejam definidos se ainda não existirem.
+
 for key, value in default_values.items():
     if key not in st.session_state:
         st.session_state[key] = value
 
-# --- Funções ---
 def limpar_filtros():
-    """Reseta todos os valores no session_state para os padrões definidos."""
     for key, value in default_values.items():
         st.session_state[key] = value
 
@@ -54,7 +45,7 @@ def train_and_save_artifacts():
     with st.spinner('Treinando o modelo... Isso pode levar um momento.'):
         try:
             dados = df.copy()
-        except Exception as e: # MODIFICAÇÃO: Captura um erro mais genérico para carregamento de dados
+        except Exception as e: 
             st.error(f"Erro ao carregar o arquivo de dados do GitHub: {e}")
             return
 
@@ -70,29 +61,22 @@ def train_and_save_artifacts():
             remainder='passthrough'
         )
         
-        # MODIFICAÇÃO: Criação do pipeline completo
         modelo_rf_pipeline = Pipeline(steps=[('preprocessor', preprocessor),
                                              ('classifier', RandomForestClassifier(random_state=4532678))])
         
-        # MODIFICAÇÃO: Treinamento do pipeline completo
         modelo_rf_pipeline.fit(X_train, y_train)
 
-        # MODIFICAÇÃO: Previsão com o pipeline
         y_pred = modelo_rf_pipeline.predict(X_test)
         accuracy = accuracy_score(y_test, y_pred)
         st.success(f'Modelo treinado! Precisão no conjunto de teste: {accuracy * 100:.2f}%')
 
-        # MODIFICAÇÃO: Salva o pipeline completo
         joblib.dump(modelo_rf_pipeline, PIPELINE_FILENAME)
         st.success(f"Pipeline do modelo salvo com sucesso como '{PIPELINE_FILENAME}'!")
-        # Removido o salvamento separado do pré-processador
 
 @st.cache_resource
 def load_artifacts():
     try:
-        # MODIFICAÇÃO: Carrega o pipeline completo
         pipeline = joblib.load(PIPELINE_FILENAME)
-        # Retorna o pipeline, sem a necessidade de retornar o preprocessor separadamente
         return pipeline 
     except FileNotFoundError:
         return None
@@ -107,16 +91,14 @@ def load_raw_data():
 
 @st.cache_resource
 def gerar_pairplot(df):
-    """Função cacheada para gerar pairplot de forma eficiente"""
     return sns.pairplot(
         df,
         hue="Obesity",
         palette="tab10",
         corner=True,
-        plot_kws={'s': 10}  # pontos menores para reduzir carga gráfica
+        plot_kws={'s': 10}  
     )
     
-# --- CABEÇALHO DA PÁGINA PRINCIPAL ---
 st.title("Dashboard de Análise de Risco de Obesidade")
 
 _, col_img, _ = st.columns([1, 4, 1])
@@ -131,7 +113,6 @@ with col_img:
 
 st.markdown("---")
 
-# 3 MENU STREAMLIT DASHBOARD
     
 opcoes_genero = {"Male": "Masculino", "Female": "Feminino"}
 opcoes_sim_nao = {'yes': "Sim", 'no': "Não"}
@@ -161,17 +142,13 @@ with st.sidebar.form("formulario_previsao"):
     st.subheader("🍏 Hábitos Alimentares e Estilo de Vida")
     st.selectbox("Histórico familiar de sobrepeso?", options=list(opcoes_sim_nao.keys()), format_func=lambda x: opcoes_sim_nao[x], key="family_history")
     st.selectbox("Consumo de alimentos calóricos (FAVC)?", options=list(opcoes_sim_nao.keys()), format_func=lambda x: opcoes_sim_nao[x], key="favc")
-    # MODIFICAÇÃO: Ajuste do step para 0.5
     st.slider("Consumo de vegetais (FCVC)", 1.0, 3.0, step=0.5, help="1: Nunca, 2: Às vezes, 3: Sempre", key="fcvc") 
-    # MODIFICAÇÃO: Ajuste do step para 0.5
     st.slider("Refeições principais por dia", 1.0, 4.0, step=0.5, key="ncp") 
     st.selectbox("Consome lanches entre as refeições?", options=list(opcoes_caec_calc.keys()), format_func=lambda x: opcoes_caec_calc[x], key="caec")
     st.selectbox("É fumante?", options=list(opcoes_sim_nao.keys()), format_func=lambda x: opcoes_sim_nao[x], key="smoke")
     st.slider("Consumo diário de água (Litros)", 1.0, 4.0, step=0.5, key="ch2o")
     st.selectbox("Monitora o consumo de calorias?", options=list(opcoes_sim_nao.keys()), format_func=lambda x: opcoes_sim_nao[x], key="scc")
-    # MODIFICAÇÃO: Ajuste do step para 0.5
     st.slider("Frequência de atividade física (dias/semana)", 0.0, 7.0, step=0.5, key="faf") 
-    # MODIFICAÇÃO: Ajuste do step para 0.1
     st.slider("Tempo de uso de telas (horas/dia)", 0.0, 5.0, step=0.1, key="tue") 
     st.selectbox("Frequência no consumo de álcool (CALC)", options=list(opcoes_caec_calc.keys()), format_func=lambda x: opcoes_caec_calc[x], key="calc")
     st.selectbox("Meio de transporte", options=list(opcoes_mtrans.keys()), format_func=lambda x: opcoes_mtrans[x], key="mtrans")
@@ -183,16 +160,13 @@ st.sidebar.markdown("---")
 if st.sidebar.button("🚀 Treinar Modelo com CSV do GitHub"):
     train_and_save_artifacts()
 
-# 4 VISUALIZAÇÃO DO DASHBOARD
-# MODIFICAÇÃO: 'modelo' agora é o pipeline completo
 modelo = load_artifacts() 
 dados_brutos = load_raw_data()
 
-# Mensagem inicial ou resultados da previsão
 if not botao_submeter:
     st.info("Utilize a barra lateral para inserir seus dados e clique em 'Gerar Previsão' para obter uma análise completa.")
 else:
-    # MODIFICAÇÃO: Verifica se o pipeline completo foi carregado
+
     if modelo is not None: 
         input_dict = {
             "Gender": st.session_state.gender, "Age": st.session_state.age, "Height": st.session_state.height, "Weight": st.session_state.weight,
@@ -201,7 +175,6 @@ else:
             "TUE": st.session_state.tue, "CALC": st.session_state.calc, "MTRANS": st.session_state.mtrans
         }
         input_df = pd.DataFrame([input_dict])
-        # MODIFICAÇÃO: O pipeline já inclui o pré-processamento, então não é necessário chamar o preprocessor separadamente
         predicao = modelo.predict(input_df)[0] 
         probabilidade_predicao = modelo.predict_proba(input_df)
         imc = st.session_state.weight / (st.session_state.height ** 2)
@@ -237,7 +210,6 @@ else:
     else:
         st.error("O pipeline do modelo não foi carregado corretamente. Por favor, treine o modelo usando o botão na barra lateral.")
 
-# Gráficos analíticos exibidos se os dados brutos existirem
 if dados_brutos is not None:
     st.markdown("<hr>", unsafe_allow_html=True)
     st.header("📊 Painel Analítico Interativo")
@@ -252,7 +224,7 @@ if dados_brutos is not None:
             st.plotly_chart(fig_pizza, use_container_width=True)
         with col2:
             st.subheader("Fatores Mais Relevantes na Previsão")
-            # MODIFICAÇÃO: Acessa o classificador e o preprocessor de dentro do pipeline
+            
             if modelo is not None and hasattr(modelo.named_steps['classifier'], 'feature_importances_'):
                 try:
                     importances = modelo.named_steps['classifier'].feature_importances_
@@ -279,7 +251,7 @@ if dados_brutos is not None:
         selected_vars = st.multiselect(
             "Variáveis para análise",
             numeric_features,
-            default=numeric_features[:3],  # pré-seleção para facilitar
+            default=numeric_features[:3],  
             max_selections=4
         )
 
