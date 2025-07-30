@@ -41,6 +41,11 @@ def limpar_filtros():
     for key, value in default_values.items():
         st.session_state[key] = value
 
+def clear_all_caches():
+    st.cache_data.clear()
+    st.cache_resource.clear()
+    st.success("Caches limpos com sucesso!")
+
 def train_and_save_artifacts():
     with st.spinner('Treinando o modelo... Isso pode levar um momento.'):
         try:
@@ -72,7 +77,8 @@ def train_and_save_artifacts():
 
         joblib.dump(modelo_rf_pipeline, PIPELINE_FILENAME)
         st.success(f"Pipeline do modelo salvo com sucesso como '{PIPELINE_FILENAME}'!")
-
+    clear_all_caches()
+    st.rerun()
 @st.cache_resource
 def load_artifacts():
     try:
@@ -121,6 +127,8 @@ opcoes_mtrans = {'Automobile': "Automóvel", 'Motorbike': "Moto", 'Bike': "Bicic
 
 st.sidebar.header("Controles do Formulário")
 st.sidebar.button("🧹 Limpar Filtros", on_click=limpar_filtros, use_container_width=True)
+st.sidebar.button("🗑️ Limpar Cache do Aplicativo", on_click=clear_all_caches, use_container_width=True) # Added clear cache button
+
 
 st.sidebar.header("📊 Insira seus Dados para Análise")
 
