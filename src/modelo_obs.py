@@ -21,7 +21,7 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-PIPELINE_FILENAME = os.path.join("https://github.com/AlexandreRego/AnaliseObesidade/blob/main/src/modelo_rf_pipeline.pkl")
+PIPELINE_FILENAME = os.path.join("src/modelo_rf_pipeline.pkl")
 df = pd.read_csv('https://raw.githubusercontent.com/AlexandreRego/AnaliseObesidade/refs/heads/main/data/raw/Obesity.csv')
 numeric_features = ['Age', 'Height', 'Weight', 'FCVC', 'NCP', 'CH2O', 'FAF', 'TUE']
 categorical_features = ['Gender', 'family_history', 'FAVC', 'CAEC', 'SMOKE', 'SCC', 'CALC', 'MTRANS']
