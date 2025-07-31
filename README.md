@@ -28,4 +28,8 @@ Este repositório contém a solução desenvolvida para o Tech Challenge Fase 04
 - **Machine Learning:** scikit-learn  
 - **Visualização:** matplotlib, seaborn, plotly  
 - **Web App:** Streamlit  
-- **Containerização:** Docker, Docker Compose  
+- **Containerização:** Docker, Docker Compose
+
+## Plataforma da aplicação em Streamlit para consulta e simulações
+
+- Streamlit: https://alexandrerego-analiseobesidade-srcmodelo-obs-w115vv.streamlit.app/
